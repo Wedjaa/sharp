@@ -473,20 +473,6 @@ class PipelineWorker : public AsyncWorker {
         );
       }
 
-      // Negate the colours in the image
-      if (baton->negate) {
-        image = image.invert();
-      }
-
-      // Gamma encoding (darken)
-      if (baton->gamma >= 1 && baton->gamma <= 3) {
-        image = Gamma(image, 1.0 / baton->gamma);
-      }
-
-      // Convert to greyscale (linear, therefore after gamma encoding, if any)
-      if (baton->greyscale) {
-        image = image.colourspace(VIPS_INTERPRETATION_B_W);
-      }
 
       if (xshrink > 1 || yshrink > 1) {
         image = image.shrink(xshrink, yshrink);
@@ -610,6 +596,22 @@ class PipelineWorker : public AsyncWorker {
       }
 
       // Post extraction
+
+      // Negate the colours in the image
+      if (baton->negate) {
+        image = image.invert();
+      }
+
+      // Gamma encoding (darken)
+      if (baton->gamma >= 1 && baton->gamma <= 3) {
+        image = Gamma(image, 1.0 / baton->gamma);
+      }
+
+      // Convert to greyscale (linear, therefore after gamma encoding, if any)
+      if (baton->greyscale) {
+        image = image.colourspace(VIPS_INTERPRETATION_B_W);
+      }
+
       if (baton->topOffsetPost != -1) {
         image = image.extract_area(
           baton->leftOffsetPost, baton->topOffsetPost, baton->widthPost, baton->heightPost
